@@ -38,7 +38,7 @@
 
 
 // The following defines the bits and registers of the ENS160.
-#define SFE_ENS160_PART_ID         0x00
+#define SFE_ENS160_PART_ID    0x00
 
 typedef struct
 {
@@ -46,7 +46,12 @@ typedef struct
 	uint8_t part_id_lsb : 8; // Value = 0x60
 }	sfe_ens160_part_id_t;
 
-#define SFE_ENS160_OP_MODE         0x10
+#define SFE_ENS160_OP_MODE    0x10
+// Possible Operating Mode defines:
+#define SFE_ENS160_DEEP_SLEEP 0x00
+#define SFE_ENS160_IDLE       0x01
+#define SFE_ENS160_STANDARD   0x02
+#define SFE_ENS160_RESET      0xF0
 typedef struct
 {
 	uint8_t op_mode : 8;

@@ -72,6 +72,17 @@ class QwDevENS160
     //  retval      true if device is connected, false if not connected
 
     bool isConnected(); // Checks if sensor ack's the I2C request
+												
+    //////////////////////////////////////////////////////////////////////////////////
+    // writeRegisterRegion()
+    //
+    //
+    //  Parameter    Description
+    //  ---------    -----------------------------
+    //  reg          register to write to
+    //  data         Array to store data in
+    //  length       Length of the data being written in bytes 
+    //  retval       -1 = error, 0 = success
 
     int32_t writeRegisterRegion(uint8_t reg, uint8_t *data, uint16_t length);
 
@@ -83,7 +94,7 @@ class QwDevENS160
     //  ---------    -----------------------------
     //  reg          register to read from
     //  data         Array to store data in
-    //  length       Length of the data to read
+    //  length       Length of the data to read in bytes
     //  retval       -1 = error, 0 = success
 
     int32_t readRegisterRegion(uint8_t reg, uint8_t *data, uint16_t length);
