@@ -10,10 +10,18 @@
 
 bool QwDevENS160::init(void)
 {
+		uint16_t uniqueID; 
+
     //  do we have a bus yet? is the device connected?
     if (!_sfeBus->ping(_i2cAddress))
         return false;
-	
+		
+		uniqueID = getUniqueID(); 
+		if( uniqueID != ENS160_DEVICE_ID )
+			return false; 
+
+		return true; 
+
 }
 
 
@@ -30,6 +38,7 @@ bool QwDevENS160::init(void)
 
 bool QwDevENS160::isConnected()
 {
+
 }
 
 
@@ -47,6 +56,7 @@ void QwDevENS160::setCommunicationBus(QwIDeviceBus &theBus, uint8_t i2cAddress)
 {
     _sfeBus = &theBus;
 		_i2cAddress = i2cAddress; 
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -96,5 +106,16 @@ int32_t QwDevENS160::readRegisterRegion(uint8_t offset, uint8_t *data, uint16_t 
     return _sfeBus->readRegisterRegion(_i2cAddress, offset, data, length);
 }
 
+uint16_t QwDevENS160::getUniqueID()
+{
+	int32_t retVal;
+	uint16_t tempVal; 
 
+	retVal = _sfeBus->readRegisterRegion(_i2cAddress, 0x00, &tempVal, 1);
 
+	if( retVal != 0 )
+		return 0;
+
+	return tempVal; 
+
+}

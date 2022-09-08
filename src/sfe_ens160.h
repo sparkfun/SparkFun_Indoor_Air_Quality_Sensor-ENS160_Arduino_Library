@@ -46,6 +46,8 @@
 #define ENS160_ADDRESS_LOW 0x52
 #define ENS160_ADDRESS_HIGH 0x53
 
+#define ENS160_DEVICE_ID 0x0160
+
 class QwDevENS160
 {
 	public: 
@@ -100,6 +102,15 @@ class QwDevENS160
 		void setCommunicationBus(QwIDeviceBus &theBus, uint8_t i2cAddress);
 		void setCommunicationBus(QwIDeviceBus &theBus);
 
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // Operating Mode 0x10
+    // More operating Mode (status) 0x20
+		// Interrupts
+		// Temp Compensation	
+		// Data - AQI, TVOC, ECO2, Temp (added), Relative Humidity (added)
+		// General Purpose Read/Write Registers
 
 	private: 
 
