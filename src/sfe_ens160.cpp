@@ -214,34 +214,26 @@ bool QwDevENS160::setInterruptDrive(uint8_t push_open)
 }
 
 
-bool QwDevENS160::getDataStatus()
+bool QwDevENS160::setDataInterrupt(bool enable)
 {
 	int32_t retVal;
-	sfe_ens160_config_t tempVal;
 
-	retVal = readRegisterRegion(SFE_ENS160_, &tempVal, 1);
+	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, (sfe_ens160_config_t)enable, 1);
 
 	if( retVal != 0 )
 		return false;
-
-	if( tempVal.int_dat == 0 )
-		return false
 
 	return true; 
 }
 
-bool QwDevENS160::getGPRStatus()
+bool QwDevENS160::setGPRInterrupt(bool enable)
 {
 	int32_t retVal;
-	sfe_ens160_config_t tempVal;
 
-	retVal = readRegisterRegion(SFE_ENS160_, &tempVal, 1);
+	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, (sfe_ens160_config_t)enable, 1);
 
 	if( retVal != 0 )
 		return false;
-
-	if( tempVal.int_gpr == 0 )
-		return false
 
 	return true; 
 }
@@ -262,4 +254,249 @@ uint32_t QwDevENS160::getAppVer()
 	version |= tempVal[2] << 16;
 
 	return version;
+}
+
+
+bool QwDevENS160::setTempCompensation(float tempKelvin)
+{
+	int32_t retVal;
+	sfe_ens160_temp_in_t tempVal[2] = {0};
+
+	tempKelvin = tempKelvin * 64; // convert value - fixed equation pg. 29 of datasheet
+	tempVal[0] = (tempKelvin & 0x0F);
+	tempVal[1] = (tempKelvin & 0xF0) >> 8;
+
+	retVal = writeRegisterRegion(SFE_ENS160_TEMP_IN, tempVal, 2);
+
+	if( retVal != 0 )
+		return false;
+
+	return true; 
+}
+
+
+bool QwDevENS160::setRHCompensation(uint16_t humidity)
+{
+	int32_t retVal;
+	sfe_ens160_rh_in_t tempVal[2] = {0};
+
+	humidity = humidity * 512; // convert value - fixed equation pg. 29 in datasheet. 
+	tempVal[0] = (humidity & 0x0F);
+	tempVal[1] = (humidity & 0xF0) >> 8;
+
+	retVal = writeRegisterRegion(SFE_ENS160_RH_IN, tempVal, 2);
+
+	if( retVal != 0 )
+		return false;
+
+	return true; 
+}
+
+bool QwDevENS160::checkDataStatus()
+{
+	int32_t retVal;
+	sfe_ens160_device_status_t tempVal; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
+
+	if( retVal != 0 )
+		return false; 
+
+	if( tempval.new_dat == 1 )
+		return true;
+
+	return false;
+}
+
+bool QwDevENS160::checkGPRStatus()
+{
+	int32_t retVal;
+	sfe_ens160_device_status_t tempVal; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
+
+	if( retVal != 0 )
+		return false; 
+
+	if( tempval.new_gpr == 1 )
+		return true;
+
+	return false;
+}
+
+uint8_t QwDevENS160::getFlags()
+{
+	int32_t retVal;
+	sfe_ens160_device_status_t tempVal; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
+
+	if( retVal != 0 )
+		return 0xFF; // Change to general error
+
+	switch( tempVal.validity_flag )
+	{
+		case 0: // Normal operation
+			return 0;
+			break;
+		case 1: // Warm-up phase
+			return 1;
+			break;
+		case 2: // Initial Start-Up Phase
+			return 2;
+			break;
+		case 3: // Invalid Output
+			return 3;
+			break;
+		default:
+			return 0xFF;
+	}
+}
+
+
+bool QwDevENS160::checkOperationMode()
+{
+	int32_t retVal;
+	sfe_ens160_device_status_t tempVal; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
+
+	if( retVal != 0 )
+		return false; 
+
+	if( tempval.new_stat_as == 1 )
+		return true;
+
+	return false;
+}
+
+bool QwDevENS160::getError()
+{
+	int32_t retVal;
+	sfe_ens160_device_status_t tempVal; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
+
+	if( retVal != 0 )
+		return false; 
+
+	if( tempval.new_stat_er == 1 )
+		return true;
+
+	return false;
+}
+
+
+// Reports the calculated Air Quality Index according to UBA.
+uint8_t QwDevENS160::getAQI()
+{
+	int32_t retVal;
+	sfe_ens160_data_aqi_t tempVal; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DATA_AQI, &tempVal, 1);
+
+	if( retVal != 0 )
+		return 0;
+
+	return sfe_ens160_data_aqi_t.aqi_uba;
+}
+
+uint16_t QwDevENS160::getTVOC()
+{
+	int32_t retVal;
+	uint16_t tvoc; 
+	sfe_ens160_data_tvoc_t tempVal[2] = {0}; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DATA_TVOC, &tempVal, 2);
+
+	if( retVal != 0 )
+		return 0;
+	
+	tvoc = tempVal[0];
+	tvoc |= (tempVal[1] & 0xF0) << 8;
+
+	return tvoc;
+}
+
+
+uint16_t QwDevENS160::getETOH()
+{
+	int32_t retVal;
+	uint16_t ethanol; 
+	sfe_ens160_data_eco2_t tempVal[2] = {0}; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DATA_ETOH, &tempVal, 2);
+
+	if( retVal != 0 )
+		return 0;
+	
+	ethanol = tempVal[0];
+	ethanol |= (tempVal[1] & 0xF0) << 8;
+
+	return ethanol;
+}
+
+uint16_t QwDevENS160::getECO2()
+{
+	int32_t retVal;
+	uint16_t eco; 
+	sfe_ens160_data_eco2_t tempVal[2] = {0}; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DATA_ECO2, &tempVal, 2);
+
+	if( retVal != 0 )
+		return 0;
+	
+	eco = tempVal[0];
+	eco |= (tempVal[1] & 0xF0) << 8;
+
+	return tvoc;
+}
+
+float QwDevENS160::getTempKelvin()
+{
+	int32_t retVal;
+	float temperature; 
+	sfe_ens160_data_t_t tempVal[2] = {0}; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DATA_T, &tempVal, 2);
+
+	if( retVal != 0 )
+		return 0;
+	
+	temperature = (float)tempVal[0];
+	temperature |= (float)((tempVal[1] & 0xF0) << 8);
+
+	temperature = temperature/64; // Formula as described on pg. 32 of datasheet.
+
+	return temperature;
+}
+
+float QwDevENS160::getTempCelsius()
+{
+	float temperature; 
+
+	temperature = getTempKelvin();
+
+	return (temperature - 273.15);
+}
+
+
+float QwDevENS160::getRH()
+{
+	int32_t retVal;
+	uint16_t rh; 
+	sfe_ens160_rh_t tempVal[2] = {0}; 
+
+	retVal = readRegisterRegion(SFE_ENS160_DATA_RH, &tempVal, 2);
+
+	if( retVal != 0 )
+		return 0;
+	
+	rh = tempVal[0];
+	rh |= (tempVal[1] & 0xF0) << 8;
+
+	temperature = temperature/512; // Formula as described on pg. 33 of datasheet.
+
+	return temperature;
 }
