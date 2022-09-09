@@ -123,6 +123,29 @@ class QwDevENS160
 		// Data - AQI, TVOC, ECO2, Temp (added), Relative Humidity (added)
 		// General Purpose Read/Write Registers
 
+		bool setOperatingMode(uint8_t);
+		bool configureInterrupt(uint8_t);
+		bool setInterruptEnable(bool);
+		bool setInterruptPolarity(uint8_t);
+		bool setInterruptDrive(uint8_t);
+		bool setDataInterrupt(bool);
+		bool setGPRInterrupt(bool);
+		uint32_t getAppVer();
+		bool setTempCompensation(float);
+		bool setRHCompensation(uint16_t);
+		bool checkDataStatus();
+		bool checkGPRStatus();
+		uint8_t getFlags();
+		bool checkOperationMode();
+		bool getError();
+		uint8_t getAQI();
+		uint16_t getTVOC();
+		uint16_t getETOH();
+		uint16_t getECO2();
+		float getTempKelvin();
+		float getTempCelsius();
+		float getRH();
+
 	private: 
 
 		
