@@ -1,4 +1,5 @@
 #include "sfe_ens160.h"
+#include "sfe_ens160_regs.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // init()
@@ -38,7 +39,14 @@ bool QwDevENS160::init(void)
 
 bool QwDevENS160::isConnected()
 {
+	uint16_t uniqueID; 
 
+	uniqueID = getUniqueID(); 
+
+	if( uniqueID != ENS160_DEVICE_ID )
+		return false; 
+
+	return true;
 }
 
 
@@ -85,9 +93,9 @@ void QwDevENS160::setCommunicationBus(QwIDeviceBus &theBus)
 //  data         Data to be written
 //  length       Number of bytes to be written
 
-int32_t QwDevENS160::writeRegisterRegion(uint8_t offset, uint8_t *data, uint16_t length)
+int32_t QwDevENS160::writeRegisterRegion(uint8_t reg, uint8_t *data, uint16_t length)
 {
-    return _sfeBus->writeRegisterRegion(_i2cAddress, offset, data, length);
+    return _sfeBus->writeRegisterRegion(_i2cAddress, reg, data, length);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,9 +109,9 @@ int32_t QwDevENS160::writeRegisterRegion(uint8_t offset, uint8_t *data, uint16_t
 //  data         Pointer to where data will be saved
 //  length       Number of bytes to be read
 
-int32_t QwDevENS160::readRegisterRegion(uint8_t offset, uint8_t *data, uint16_t length)
+int32_t QwDevENS160::readRegisterRegion(uint8_t reg, uint8_t *data, uint16_t length)
 {
-    return _sfeBus->readRegisterRegion(_i2cAddress, offset, data, length);
+    return _sfeBus->readRegisterRegion(_i2cAddress, reg, data, length);
 }
 
 
@@ -112,20 +120,19 @@ int32_t QwDevENS160::readRegisterRegion(uint8_t offset, uint8_t *data, uint16_t 
 //
 // Gets the device's unique ID 
 //
-int32_t QwDevENS160::getUniqueID()
+uint16_t QwDevENS160::getUniqueID()
 {
 	int32_t retVal;
 	uint8_t tempVal[2] = {0}; 
 	uint16_t id; 
 
-	retVal = readRegisterRegion(_i2cAddress, 0x00, tempVal, 2);
-
+	retVal = readRegisterRegion(SFE_ENS160_PART_ID, tempVal, 2);
 	
 	id = tempVal[0];
 	id |= tempVal[1] << 8;
 
 	if( retVal != 0 )
-		return -1;
+		return 0;
 
 	return id; 
 
@@ -547,7 +554,7 @@ uint16_t QwDevENS160::getTVOC()
 	uint16_t tvoc; 
 	sfe_ens160_data_tvoc_t tempVal[2] = {0}; 
 
-	retVal = readRegisterRegion(SFE_ENS160_DATA_TVOC, &tempVal, 2);
+	retVal = readRegisterRegion(SFE_ENS160_DATA_TVOC, tempVal, 2);
 
 	if( retVal != 0 )
 		return 0;
@@ -573,7 +580,7 @@ uint16_t QwDevENS160::getETOH()
 	uint16_t ethanol; 
 	sfe_ens160_data_eco2_t tempVal[2] = {0}; 
 
-	retVal = readRegisterRegion(SFE_ENS160_DATA_ETOH, &tempVal, 2);
+	retVal = readRegisterRegion(SFE_ENS160_DATA_ETOH, tempVal, 2);
 
 	if( retVal != 0 )
 		return 0;
@@ -596,7 +603,7 @@ uint16_t QwDevENS160::getECO2()
 	uint16_t eco; 
 	sfe_ens160_data_eco2_t tempVal[2] = {0}; 
 
-	retVal = readRegisterRegion(SFE_ENS160_DATA_ECO2, &tempVal, 2);
+	retVal = readRegisterRegion(SFE_ENS160_DATA_ECO2, tempVal, 2);
 
 	if( retVal != 0 )
 		return 0;
@@ -619,7 +626,7 @@ float QwDevENS160::getTempKelvin()
 	float temperature; 
 	sfe_ens160_data_t_t tempVal[2] = {0}; 
 
-	retVal = readRegisterRegion(SFE_ENS160_DATA_T, &tempVal, 2);
+	retVal = readRegisterRegion(SFE_ENS160_DATA_T, tempVal, 2);
 
 	if( retVal != 0 )
 		return 0;
@@ -659,7 +666,7 @@ float QwDevENS160::getRH()
 	uint16_t rh; 
 	sfe_ens160_rh_t tempVal[2] = {0}; 
 
-	retVal = readRegisterRegion(SFE_ENS160_DATA_RH, &tempVal, 2);
+	retVal = readRegisterRegion(SFE_ENS160_DATA_RH, tempVal, 2);
 
 	if( retVal != 0 )
 		return 0;

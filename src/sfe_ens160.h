@@ -119,6 +119,7 @@ class QwDevENS160
 
 		bool setOperatingMode(uint8_t);
 		uint32_t getAppVer();
+		uint16_t getUniqueID();
 
     //////////////////////////////////////////////////////////////////////////////////
 		// Interrupts

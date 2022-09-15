@@ -1,4 +1,4 @@
-// ife_bus.cpp
+// sfe_bus.cpp
 //
 // This is a library written for SparkFun Indoor Air Quality Sensor - ENS160 (Qwiic)
 //

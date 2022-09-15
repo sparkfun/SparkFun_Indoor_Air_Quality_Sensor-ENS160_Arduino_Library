@@ -167,8 +167,8 @@ typedef struct
 // RH = Register Value / 512
 typedef struct
 {
-	data_rh_msb : 8; // Fractions -- 0x33
-	data_rh_lsb : 8; // Integer -- 0x32
+	uint8_t data_rh_msb : 8; // Fractions -- 0x33
+	uint8_t data_rh_lsb : 8; // Integer -- 0x32
 }	sfe_ens160_data_rh_t;
 
 #define SFE_ENS160_DATA_MISR       0x38
