@@ -588,7 +588,7 @@ uint16_t QwDevENS160::getETOH()
 //////////////////////////////////////////////////////////////////////////////
 // getECO2()
 //
-// This reports the CO2 concentration in ppm (pars per million) based on the detected VOCs and hydrogen. 
+// This reports the CO2 concentration in ppm (parts per million) based on the detected VOCs and hydrogen. 
 //
 uint16_t QwDevENS160::getECO2()
 {
