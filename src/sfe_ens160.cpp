@@ -106,6 +106,12 @@ int32_t QwDevENS160::readRegisterRegion(uint8_t offset, uint8_t *data, uint16_t 
     return _sfeBus->readRegisterRegion(_i2cAddress, offset, data, length);
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// getUniqueID()
+//
+// Gets the device's unique ID 
+//
 int32_t QwDevENS160::getUniqueID()
 {
 	int32_t retVal;
@@ -126,6 +132,16 @@ int32_t QwDevENS160::getUniqueID()
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
+// setOperatingMode()
+//
+// Sets the operating mode: Deep Sleep (0x00), Idle (0x01), Standard (0x02), Reset (0xF0)
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  val					 The desired operating mode to set. 
+
+
 bool QwDevENS160::setOperatingMode(uint8_t val)
 {
 	int32_t retVal;
@@ -140,6 +156,17 @@ bool QwDevENS160::setOperatingMode(uint8_t val)
 
 	return true; 
 }
+
+
+//////////////////////////////////////////////////////////////////////////////
+// setOperatingMode()
+//
+// Sets the operating mode: Deep Sleep (0x00), Idle (0x01), Standard (0x02), Reset (0xF0)
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  val					 The desired operating mode to set. 
+//
 
 bool QwDevENS160::configureInterrupt(uint8_t val)
 {
@@ -156,16 +183,22 @@ bool QwDevENS160::configureInterrupt(uint8_t val)
 }
 
 
-bool QwDevENS160::setInterruptEnable(bool enable)
+//////////////////////////////////////////////////////////////////////////////
+// setInterrupt()
+//
+// Enables the interrupt.
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  enable			 Turns on or off the interrupt. 
+//
+
+bool QwDevENS160::setInterrupt(bool enable)
 {
 	int32_t retVal;
-
 	sfe_ens160_config_t config; 
 
-	if( enable == true )
-		config.int_en = 1;
-	else
-		config.int_en = 1;
+	config.int_en = (uint8_t)enable;
 
 	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, config, 1);
 
@@ -175,16 +208,23 @@ bool QwDevENS160::setInterruptEnable(bool enable)
 	return true;
 }
 
-bool QwDevENS160::setInterruptPolarity(uint8_t level)
+//////////////////////////////////////////////////////////////////////////////
+// setInterruptPolarity()
+//
+// Changes the polarity of the interrupt: active high or active low. By default
+// this value is set to zero or active low. 
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  activeHigh   Changes active state of interrupt from high to low. 
+//
+
+bool QwDevENS160::setInterruptPolarity(bool activeHigh)
 {
 	int32_t retVal;
-
 	sfe_ens160_config_t config; 
 
-	if( enable == 1 )
-		config.int_pol = 1;
-	else
-		config.int_pol = 0;
+	config.int_pol = (uint8_t)activeHigh;
 
 	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, config, len);
 
@@ -194,16 +234,22 @@ bool QwDevENS160::setInterruptPolarity(uint8_t level)
 	return true;
 }
 
-bool QwDevENS160::setInterruptDrive(uint8_t push_open)
+//////////////////////////////////////////////////////////////////////////////
+// setInterruptDrive()
+//
+// Changes the pin drive of the interrupt: open drain (default) to push/pull
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  pushPull     Changes the drive of the pin. 
+//
+
+bool QwDevENS160::setInterruptDrive(bool pushPull)
 {
 	int32_t retVal;
-
 	sfe_ens160_config_t config; 
 
-	if( enable == 1 )
-		config.int_cfg = 1;
-	else
-		config.int_cfg = 0;
+	config.int_cfg = (uint8_t)pushPull;
 
 	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, config, len);
 
@@ -214,6 +260,15 @@ bool QwDevENS160::setInterruptDrive(uint8_t push_open)
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
+// setDataInterrupt()
+//
+// Routes the data ready signal to the interrupt pin.
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  enable			 Self-explanatory: enables or disables data ready on interrupt.
+//
 bool QwDevENS160::setDataInterrupt(bool enable)
 {
 	int32_t retVal;
@@ -226,6 +281,16 @@ bool QwDevENS160::setDataInterrupt(bool enable)
 	return true; 
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// setGPRInterrupt()
+//
+// Routes the general purporse read register signal to the interrupt pin.
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  enable			 Self-explanatory: enables or disables general purpos read interrupt.
+//
 bool QwDevENS160::setGPRInterrupt(bool enable)
 {
 	int32_t retVal;
@@ -238,6 +303,13 @@ bool QwDevENS160::setGPRInterrupt(bool enable)
 	return true; 
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// getAppVer()
+//
+// Retrieves the 24 bit application version of the device.
+//
+//
 uint32_t QwDevENS160::getAppVer()
 {
 	int32_t retVal;
@@ -256,6 +328,15 @@ uint32_t QwDevENS160::getAppVer()
 	return version;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// setTempCompensation()
+//
+// The ENS160 can use temperature data to help give more accurate sensor data. 
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  tempKelvin	 The given temperature in Kelvin 
+//
 
 bool QwDevENS160::setTempCompensation(float tempKelvin)
 {
@@ -275,6 +356,16 @@ bool QwDevENS160::setTempCompensation(float tempKelvin)
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////////
+// setRHCompensation()
+//
+// The ENS160 can use relative Humidiy data to help give more accurate sensor data. 
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  humidity	   The given relative humidity. 
+//
 bool QwDevENS160::setRHCompensation(uint16_t humidity)
 {
 	int32_t retVal;
@@ -292,6 +383,14 @@ bool QwDevENS160::setRHCompensation(uint16_t humidity)
 	return true; 
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// checkDataStatus()
+//
+// This checks the if the NEWDAT bit is high indicating that new data is ready to be read. 
+// The bit is cleared when data has been read from their registers. 
+//
+//
 bool QwDevENS160::checkDataStatus()
 {
 	int32_t retVal;
@@ -308,6 +407,14 @@ bool QwDevENS160::checkDataStatus()
 	return false;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// checkGPRStatus()
+//
+// This checks the if the NEWGPR bit is high indicating that there is data in the
+// general purpose read registers. The bit is cleared the relevant registers have been
+// read. 
+//
 bool QwDevENS160::checkGPRStatus()
 {
 	int32_t retVal;
@@ -324,6 +431,12 @@ bool QwDevENS160::checkGPRStatus()
 	return false;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// getFlags()
+//
+// This checks the status "flags" of the device (0-3).
+//
 uint8_t QwDevENS160::getFlags()
 {
 	int32_t retVal;
@@ -354,6 +467,12 @@ uint8_t QwDevENS160::getFlags()
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////////
+// checkOperationMode()
+//
+// Checks the bit that indicates if an operation mode is running i.e. the device is not off. 
+//
 bool QwDevENS160::checkOperationMode()
 {
 	int32_t retVal;
@@ -370,7 +489,13 @@ bool QwDevENS160::checkOperationMode()
 	return false;
 }
 
-bool QwDevENS160::getError()
+
+//////////////////////////////////////////////////////////////////////////////
+// getOperationError()
+//
+// Checks the bit that indicates if an invalid operating mode has been selected. 
+//
+bool QwDevENS160::getOperationError()
 {
 	int32_t retVal;
 	sfe_ens160_device_status_t tempVal; 
@@ -387,7 +512,16 @@ bool QwDevENS160::getError()
 }
 
 
-// Reports the calculated Air Quality Index according to UBA.
+
+//////////////////////////////////////////////////////////////////////////////
+// getAQI()
+//
+// This reports the calculated Air Quality Index according to UBA which is a value between 1-5. 
+// The AQI-UBA is a guideline developed by the German Federal Environmental Agency and is widely 
+// referenced and adopted by many countries and organizations. 
+//
+// 1 - Excellent, 2 - Good, 3 - Moderate, 4 - Poor, 5 - Unhealthy. 
+//
 uint8_t QwDevENS160::getAQI()
 {
 	int32_t retVal;
@@ -401,6 +535,12 @@ uint8_t QwDevENS160::getAQI()
 	return sfe_ens160_data_aqi_t.aqi_uba;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// getTVOC()
+//
+// This reports the Total Volatile Organic Compounds in ppb (parts per billion)
+//
+//
 uint16_t QwDevENS160::getTVOC()
 {
 	int32_t retVal;
@@ -419,6 +559,14 @@ uint16_t QwDevENS160::getTVOC()
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////////
+// getETOH()
+//
+// This reports the ehtanol concentration in ppb (parts per billion). According to 
+// the datasheet this is a "virtual mirror" of the ethanol-calibrated TVOC register, 
+// which is why they share the same register. 
+//
 uint16_t QwDevENS160::getETOH()
 {
 	int32_t retVal;
@@ -436,6 +584,12 @@ uint16_t QwDevENS160::getETOH()
 	return ethanol;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// getECO2()
+//
+// This reports the CO2 concentration in ppm (pars per million) based on the detected VOCs and hydrogen. 
+//
 uint16_t QwDevENS160::getECO2()
 {
 	int32_t retVal;
@@ -453,6 +607,12 @@ uint16_t QwDevENS160::getECO2()
 	return tvoc;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// getTempKelvin()
+//
+// This reports the temperature compensation value given to the sensor in Kelvin.
+//
 float QwDevENS160::getTempKelvin()
 {
 	int32_t retVal;
@@ -472,6 +632,12 @@ float QwDevENS160::getTempKelvin()
 	return temperature;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// getTempCelsius()
+//
+// This reports the temperature compensation value given to the sensor in Celsius.
+//
 float QwDevENS160::getTempCelsius()
 {
 	float temperature; 
@@ -482,6 +648,11 @@ float QwDevENS160::getTempCelsius()
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
+// getRH()
+//
+// This reports the relative humidity compensation value given to the sensor. 
+//
 float QwDevENS160::getRH()
 {
 	int32_t retVal;

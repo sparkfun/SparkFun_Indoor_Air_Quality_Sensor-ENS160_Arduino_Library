@@ -113,31 +113,43 @@ class QwDevENS160
 		void setCommunicationBus(QwIDeviceBus &theBus, uint8_t i2cAddress);
 		void setCommunicationBus(QwIDeviceBus &theBus);
 
-
-
     //////////////////////////////////////////////////////////////////////////////////
-    // Operating Mode 0x10
-    // More operating Mode (status) 0x20
-		// Interrupts
-		// Temp Compensation	
-		// Data - AQI, TVOC, ECO2, Temp (added), Relative Humidity (added)
-		// General Purpose Read/Write Registers
+		// General Operation
+		//
 
 		bool setOperatingMode(uint8_t);
-		bool configureInterrupt(uint8_t);
-		bool setInterruptEnable(bool);
-		bool setInterruptPolarity(uint8_t);
-		bool setInterruptDrive(uint8_t);
-		bool setDataInterrupt(bool);
-		bool setGPRInterrupt(bool);
 		uint32_t getAppVer();
+
+    //////////////////////////////////////////////////////////////////////////////////
+		// Interrupts
+		bool configureInterrupt(uint8_t);
+		bool setInterrupt(bool enable = true);
+		bool setInterruptPolarity(bool activeHigh = true);
+		bool setInterruptDrive(bool pushPull = true);
+		bool setDataInterrupt(bool enable = true);
+		bool setGPRInterrupt(bool);
+
+    //////////////////////////////////////////////////////////////////////////////////
+		// Temperature and Humidity compensation
+		//
+
 		bool setTempCompensation(float);
 		bool setRHCompensation(uint16_t);
+		
+    //////////////////////////////////////////////////////////////////////////////////
+		// Device status
+		//
+
 		bool checkDataStatus();
 		bool checkGPRStatus();
 		uint8_t getFlags();
 		bool checkOperationMode();
-		bool getError();
+		bool getOperationError();
+
+    //////////////////////////////////////////////////////////////////////////////////
+		// Data registers
+		//
+		
 		uint8_t getAQI();
 		uint16_t getTVOC();
 		uint16_t getETOH();
