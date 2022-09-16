@@ -98,6 +98,11 @@ int32_t QwDevENS160::writeRegisterRegion(uint8_t reg, uint8_t *data, uint16_t le
     return _sfeBus->writeRegisterRegion(_i2cAddress, reg, data, length);
 }
 
+int32_t QwDevENS160::writeRegisterRegion(uint8_t reg, uint8_t data, uint16_t length)
+{
+    return _sfeBus->writeRegisterRegion(_i2cAddress, reg, data, length);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // readRegisterRegion()
 //
@@ -156,7 +161,7 @@ bool QwDevENS160::setOperatingMode(uint8_t val)
 	if( val != SFE_ENS160_RESET | val > SFE_ENS160_STANDARD )
 		return false;
 
-	retVal = writeRegisterRegion(SFE_ENS160_OP_MODE, (sfe_ens160_op_mode_t)val, 1);
+	retVal = writeRegisterRegion(SFE_ENS160_OP_MODE, val, 1);
 
 	if( retVal != 0 )
 		return false;
@@ -166,22 +171,20 @@ bool QwDevENS160::setOperatingMode(uint8_t val)
 
 
 //////////////////////////////////////////////////////////////////////////////
-// setOperatingMode()
+// configureInterrupt()
 //
-// Sets the operating mode: Deep Sleep (0x00), Idle (0x01), Standard (0x02), Reset (0xF0)
+// Changes all of the settings within the interrupt configuration register.
 //
 //  Parameter    Description
 //  ---------    -----------------------------
-//  val					 The desired operating mode to set. 
+//  val					 The desired configuration settings.
 //
 
 bool QwDevENS160::configureInterrupt(uint8_t val)
 {
 	int32_t retVal;
 
-	// I don't think this will work casting it as the typedef struct in the case
-	// that the user wants to set multiple things at once, but idk.
-	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, (sfe_ens160_config_t)val, 1);
+	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, val, 1);
 
 	if( retVal != 0 )
 		return false;
@@ -203,11 +206,16 @@ bool QwDevENS160::configureInterrupt(uint8_t val)
 bool QwDevENS160::setInterrupt(bool enable)
 {
 	int32_t retVal;
-	sfe_ens160_config_t config; 
+	uint8_t tempVal; 
 
-	config.int_en = (uint8_t)enable;
+	retVal = readRegisterRegion(SFE_ENS160_CONFIG, &tempVal, 1);
 
-	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, config, 1);
+	if( retVal != 0 )
+		return false;
+	
+	tempVal = (tempVal & (uint8_t)enable); 
+
+	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 
 	if( retVal != 0 )
 		return false;
@@ -229,11 +237,16 @@ bool QwDevENS160::setInterrupt(bool enable)
 bool QwDevENS160::setInterruptPolarity(bool activeHigh)
 {
 	int32_t retVal;
-	sfe_ens160_config_t config; 
+	uint8_t tempVal; 
 
-	config.int_pol = (uint8_t)activeHigh;
+	retVal = readRegisterRegion(SFE_ENS160_CONFIG, &tempVal, 1);
+	
+	if( retVal != 0 )
+		return false;
 
-	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, config, len);
+	tempVal = (tempVal & (uint8_t)(activeHigh << 6)); 
+
+	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 
 	if( retVal != 0 )
 		return false;
@@ -254,11 +267,16 @@ bool QwDevENS160::setInterruptPolarity(bool activeHigh)
 bool QwDevENS160::setInterruptDrive(bool pushPull)
 {
 	int32_t retVal;
-	sfe_ens160_config_t config; 
+	uint8_t tempVal; 
 
-	config.int_cfg = (uint8_t)pushPull;
+	retVal = readRegisterRegion(SFE_ENS160_CONFIG, &tempVal, 1);
 
-	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, config, len);
+	if( retVal != 0 )
+		return false;
+	
+	tempVal = (tempVal & (uint8_t)(pushPull << 5)); 
+
+	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 
 	if( retVal != 0 )
 		return false;
@@ -279,8 +297,16 @@ bool QwDevENS160::setInterruptDrive(bool pushPull)
 bool QwDevENS160::setDataInterrupt(bool enable)
 {
 	int32_t retVal;
+	uint8_t tempVal; 
 
-	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, (sfe_ens160_config_t)enable, 1);
+	retVal = readRegisterRegion(SFE_ENS160_CONFIG, &tempVal, 1);
+
+	if( retVal != 0 )
+		return false;
+	
+	tempVal = (tempVal & (uint8_t)(enable << 1)); 
+
+	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 
 	if( retVal != 0 )
 		return false;
@@ -301,8 +327,16 @@ bool QwDevENS160::setDataInterrupt(bool enable)
 bool QwDevENS160::setGPRInterrupt(bool enable)
 {
 	int32_t retVal;
+	uint8_t tempVal; 
 
-	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, (sfe_ens160_config_t)enable, 1);
+	retVal = readRegisterRegion(SFE_ENS160_CONFIG, &tempVal, 1);
+
+	if( retVal != 0 )
+		return false;
+	
+	tempVal = (tempVal & (uint8_t)(enable << 3)); 
+	
+	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 
 	if( retVal != 0 )
 		return false;
@@ -323,7 +357,7 @@ uint32_t QwDevENS160::getAppVer()
 	uint8_t tempVal[3] = {0};
 	uint32_t version;
 
-	retVal = readRegisterRegion(SFE_ENS160_GPR_READ4, &tempVal, 3);
+	retVal = readRegisterRegion(SFE_ENS160_GPR_READ4, tempVal, 3);
 
 	if( retVal != 0 )
 		return 0;
@@ -348,7 +382,7 @@ uint32_t QwDevENS160::getAppVer()
 bool QwDevENS160::setTempCompensation(float tempKelvin)
 {
 	int32_t retVal;
-	sfe_ens160_temp_in_t tempVal[2] = {0};
+	uint8_t tempVal[2] = {0};
 
 	tempKelvin = tempKelvin * 64; // convert value - fixed equation pg. 29 of datasheet
 	tempVal[0] = (tempKelvin & 0x0F);
@@ -376,7 +410,7 @@ bool QwDevENS160::setTempCompensation(float tempKelvin)
 bool QwDevENS160::setRHCompensation(uint16_t humidity)
 {
 	int32_t retVal;
-	sfe_ens160_rh_in_t tempVal[2] = {0};
+	uint8_t tempVal[2] = {0};
 
 	humidity = humidity * 512; // convert value - fixed equation pg. 29 in datasheet. 
 	tempVal[0] = (humidity & 0x0F);
@@ -401,14 +435,16 @@ bool QwDevENS160::setRHCompensation(uint16_t humidity)
 bool QwDevENS160::checkDataStatus()
 {
 	int32_t retVal;
-	sfe_ens160_device_status_t tempVal; 
+	uint8_t tempVal; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
 
 	if( retVal != 0 )
 		return false; 
 
-	if( tempval.new_dat == 1 )
+	tempVal = (tempVal << 1);
+
+	if( tempVal  == 1 )
 		return true;
 
 	return false;
@@ -425,14 +461,16 @@ bool QwDevENS160::checkDataStatus()
 bool QwDevENS160::checkGPRStatus()
 {
 	int32_t retVal;
-	sfe_ens160_device_status_t tempVal; 
+	uint8_t tempVal; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
 
 	if( retVal != 0 )
 		return false; 
 
-	if( tempval.new_gpr == 1 )
+	tempVal = (tempVal | 0x02) > 1;
+
+	if( tempVal == 1 )
 		return true;
 
 	return false;
@@ -447,14 +485,16 @@ bool QwDevENS160::checkGPRStatus()
 uint8_t QwDevENS160::getFlags()
 {
 	int32_t retVal;
-	sfe_ens160_device_status_t tempVal; 
+	uint8_t tempVal;
 
 	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
 
 	if( retVal != 0 )
 		return 0xFF; // Change to general error
 
-	switch( tempVal.validity_flag )
+	tempVal = (tempVal | 0x0C) >> 2; 
+
+	switch( tempVal )
 	{
 		case 0: // Normal operation
 			return 0;
@@ -483,14 +523,16 @@ uint8_t QwDevENS160::getFlags()
 bool QwDevENS160::checkOperationMode()
 {
 	int32_t retVal;
-	sfe_ens160_device_status_t tempVal; 
+	uint8_t tempVal;
 
 	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
 
 	if( retVal != 0 )
 		return false; 
 
-	if( tempval.new_stat_as == 1 )
+	tempVal = (tempVal | 0x80) >> 6;
+
+	if( tempVal == 1 )
 		return true;
 
 	return false;
@@ -505,14 +547,16 @@ bool QwDevENS160::checkOperationMode()
 bool QwDevENS160::getOperationError()
 {
 	int32_t retVal;
-	sfe_ens160_device_status_t tempVal; 
+	uint8_t tempVal; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DEVICE_STATUS, &tempVal, 1);
 
 	if( retVal != 0 )
 		return false; 
 
-	if( tempval.new_stat_er == 1 )
+	tempVal = (tempVal | 0x40) >> 5;
+
+	if( tempVal == 1 )
 		return true;
 
 	return false;
@@ -532,14 +576,16 @@ bool QwDevENS160::getOperationError()
 uint8_t QwDevENS160::getAQI()
 {
 	int32_t retVal;
-	sfe_ens160_data_aqi_t tempVal; 
+	uint8_t tempVal; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DATA_AQI, &tempVal, 1);
 
 	if( retVal != 0 )
 		return 0;
+	
+	tempVal = (tempVal | 0x03);
 
-	return sfe_ens160_data_aqi_t.aqi_uba;
+	return tempVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -552,7 +598,7 @@ uint16_t QwDevENS160::getTVOC()
 {
 	int32_t retVal;
 	uint16_t tvoc; 
-	sfe_ens160_data_tvoc_t tempVal[2] = {0}; 
+	uint8_t tempVal[2] = {0}; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DATA_TVOC, tempVal, 2);
 
@@ -578,7 +624,7 @@ uint16_t QwDevENS160::getETOH()
 {
 	int32_t retVal;
 	uint16_t ethanol; 
-	sfe_ens160_data_eco2_t tempVal[2] = {0}; 
+	uint8_t tempVal[2] = {0}; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DATA_ETOH, tempVal, 2);
 
@@ -601,7 +647,7 @@ uint16_t QwDevENS160::getECO2()
 {
 	int32_t retVal;
 	uint16_t eco; 
-	sfe_ens160_data_eco2_t tempVal[2] = {0}; 
+	uint8_t tempVal[2] = {0}; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DATA_ECO2, tempVal, 2);
 
@@ -611,7 +657,7 @@ uint16_t QwDevENS160::getECO2()
 	eco = tempVal[0];
 	eco |= (tempVal[1] & 0xF0) << 8;
 
-	return tvoc;
+	return eco;
 }
 
 
@@ -624,7 +670,7 @@ float QwDevENS160::getTempKelvin()
 {
 	int32_t retVal;
 	float temperature; 
-	sfe_ens160_data_t_t tempVal[2] = {0}; 
+	uint8_t tempVal[2] = {0}; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DATA_T, tempVal, 2);
 
@@ -664,7 +710,7 @@ float QwDevENS160::getRH()
 {
 	int32_t retVal;
 	uint16_t rh; 
-	sfe_ens160_rh_t tempVal[2] = {0}; 
+	uint8_t tempVal[2] = {0}; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DATA_RH, tempVal, 2);
 
@@ -674,7 +720,7 @@ float QwDevENS160::getRH()
 	rh = tempVal[0];
 	rh |= (tempVal[1] & 0xF0) << 8;
 
-	temperature = temperature/512; // Formula as described on pg. 33 of datasheet.
+	rh = rh/512; // Formula as described on pg. 33 of datasheet.
 
-	return temperature;
+	return rh;
 }

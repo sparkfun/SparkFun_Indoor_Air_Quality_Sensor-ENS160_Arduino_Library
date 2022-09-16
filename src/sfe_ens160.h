@@ -85,6 +85,7 @@ class QwDevENS160
     //  retval       -1 = error, 0 = success
 
     int32_t writeRegisterRegion(uint8_t reg, uint8_t *data, uint16_t length);
+    int32_t writeRegisterRegion(uint8_t reg, uint8_t data, uint16_t length);
 
     //////////////////////////////////////////////////////////////////////////////////
     // readRegisterRegion()

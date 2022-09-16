@@ -143,6 +143,17 @@ int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, const uint8_
     return _i2cPort->endTransmission() ? -1 : 0; // -1 = error, 0 = success
 }
 
+int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t data, uint16_t length)
+{
+
+    _i2cPort->beginTransmission(i2c_address);
+    _i2cPort->write(offset);
+    _i2cPort->write(data);
+
+    return _i2cPort->endTransmission() ? -1 : 0; // -1 = error, 0 = success
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // readRegisterRegion()
 //
@@ -317,6 +328,25 @@ int SfeSPI::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, const uint8
 		{
 			_spiPort->transfer(*data++);
 		}
+
+		// End communication
+		digitalWrite(_cs, HIGH);
+    _spiPort->endTransaction();
+		return 0; 
+}
+
+int SfeSPI::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t data, uint16_t length)
+{
+
+		int i;
+
+		// Apply settings
+    _spiPort->beginTransaction(_sfeSPISettings);
+		// Signal communication start
+		digitalWrite(_cs, LOW);
+
+    _spiPort->transfer(offset);
+		_spiPort->transfer(data);
 
 		// End communication
 		digitalWrite(_cs, HIGH);
