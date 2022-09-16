@@ -376,17 +376,18 @@ uint32_t QwDevENS160::getAppVer()
 //
 //  Parameter    Description
 //  ---------    -----------------------------
-//  tempKelvin	 The given temperature in Kelvin 
+//  kelvinConversion	 The given temperature in Kelvin 
 //
 
 bool QwDevENS160::setTempCompensation(float tempKelvin)
 {
 	int32_t retVal;
 	uint8_t tempVal[2] = {0};
+	uint16_t kelvinConversion = tempKelvin; 
 
-	tempKelvin = tempKelvin * 64; // convert value - fixed equation pg. 29 of datasheet
-	tempVal[0] = (tempKelvin & 0x0F);
-	tempVal[1] = (tempKelvin & 0xF0) >> 8;
+	kelvinConversion = kelvinConversion * 64; // convert value - fixed equation pg. 29 of datasheet
+	tempVal[0] = (kelvinConversion & 0x0F);
+	tempVal[1] = (kelvinConversion & 0xF0) >> 8;
 
 	retVal = writeRegisterRegion(SFE_ENS160_TEMP_IN, tempVal, 2);
 
@@ -670,6 +671,7 @@ float QwDevENS160::getTempKelvin()
 {
 	int32_t retVal;
 	float temperature; 
+	uint16_t tempConversion; 
 	uint8_t tempVal[2] = {0}; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DATA_T, tempVal, 2);
@@ -677,8 +679,9 @@ float QwDevENS160::getTempKelvin()
 	if( retVal != 0 )
 		return 0;
 	
-	temperature = (float)tempVal[0];
-	temperature |= (float)((tempVal[1] & 0xF0) << 8);
+	tempConversion = tempVal[0];
+	tempConversion |= (tempVal[1] & 0xF0) << 8;
+	temperature = (float)tempConversion; 
 
 	temperature = temperature/64; // Formula as described on pg. 32 of datasheet.
 
