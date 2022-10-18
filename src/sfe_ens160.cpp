@@ -443,9 +443,9 @@ bool QwDevENS160::checkDataStatus()
 	if( retVal != 0 )
 		return false; 
 
-	tempVal = (tempVal << 1);
+	tempVal &= 0x02; 
 
-	if( tempVal  == 1 )
+	if( tempVal == 0x02 )
 		return true;
 
 	return false;
