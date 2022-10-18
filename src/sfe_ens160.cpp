@@ -469,9 +469,9 @@ bool QwDevENS160::checkGPRStatus()
 	if( retVal != 0 )
 		return false; 
 
-	tempVal = (tempVal | 0x02) > 1;
+	tempVal &= 0x01;
 
-	if( tempVal == 1 )
+	if( tempVal == 0x01 )
 		return true;
 
 	return false;
@@ -493,7 +493,7 @@ uint8_t QwDevENS160::getFlags()
 	if( retVal != 0 )
 		return 0xFF; // Change to general error
 
-	tempVal = (tempVal | 0x0C) >> 2; 
+	tempVal = (tempVal & 0x0C) >> 2; 
 
 	switch( tempVal )
 	{
@@ -531,9 +531,9 @@ bool QwDevENS160::checkOperationMode()
 	if( retVal != 0 )
 		return false; 
 
-	tempVal = (tempVal | 0x80) >> 6;
+	tempVal &= 0x80;
 
-	if( tempVal == 1 )
+	if( tempVal == 0x80 )
 		return true;
 
 	return false;
@@ -555,9 +555,9 @@ bool QwDevENS160::getOperationError()
 	if( retVal != 0 )
 		return false; 
 
-	tempVal = (tempVal | 0x40) >> 5;
+	tempVal &= 0x40;
 
-	if( tempVal == 1 )
+	if( tempVal == 0x40 )
 		return true;
 
 	return false;
@@ -584,7 +584,7 @@ uint8_t QwDevENS160::getAQI()
 	if( retVal != 0 )
 		return 0;
 	
-	tempVal = (tempVal | 0x03);
+	tempVal = (tempVal & 0x03);
 
 	return tempVal;
 }
