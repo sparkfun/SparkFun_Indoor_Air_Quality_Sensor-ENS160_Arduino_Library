@@ -158,7 +158,7 @@ bool QwDevENS160::setOperatingMode(uint8_t val)
 {
 	int32_t retVal;
 
-	if( val != SFE_ENS160_RESET | val > SFE_ENS160_STANDARD )
+	if( val > SFE_ENS160_RESET )
 		return false;
 
 	retVal = writeRegisterRegion(SFE_ENS160_OP_MODE, val, 1);

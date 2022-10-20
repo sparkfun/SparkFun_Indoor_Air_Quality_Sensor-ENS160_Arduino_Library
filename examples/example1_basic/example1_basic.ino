@@ -33,7 +33,15 @@ void setup()
 		while(1);
 	}
 
-	Serial.println("Ready.");
+	if( myENS.setOperatingMode(0xF0) )
+		Serial.println("Ready.");
+
+	delay(100);
+
+	myENS.setOperatingMode(0x02);
+
+	if( myENS.checkOperationMode() )
+		Serial.println("Running.");
 	
 }
 
