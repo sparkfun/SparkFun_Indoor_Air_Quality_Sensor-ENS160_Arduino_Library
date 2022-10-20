@@ -607,7 +607,7 @@ uint16_t QwDevENS160::getTVOC()
 		return 0;
 	
 	tvoc = tempVal[0];
-	tvoc |= (tempVal[1] & 0xF0) << 8;
+	tvoc |= tempVal[1] << 8;
 
 	return tvoc;
 }
@@ -633,7 +633,7 @@ uint16_t QwDevENS160::getETOH()
 		return 0;
 	
 	ethanol = tempVal[0];
-	ethanol |= (tempVal[1] & 0xF0) << 8;
+	ethanol |= tempVal[1] << 8;
 
 	return ethanol;
 }
@@ -656,7 +656,7 @@ uint16_t QwDevENS160::getECO2()
 		return 0;
 	
 	eco = tempVal[0];
-	eco |= (tempVal[1] & 0xF0) << 8;
+	eco |= tempVal[1]  << 8;
 
 	return eco;
 }
@@ -680,7 +680,7 @@ float QwDevENS160::getTempKelvin()
 		return 0;
 	
 	tempConversion = tempVal[0];
-	tempConversion |= (tempVal[1] & 0xF0) << 8;
+	tempConversion |= tempVal[1] << 8;
 	temperature = (float)tempConversion; 
 
 	temperature = temperature/64; // Formula as described on pg. 32 of datasheet.
@@ -721,7 +721,7 @@ float QwDevENS160::getRH()
 		return 0;
 	
 	rh = tempVal[0];
-	rh |= (tempVal[1] & 0xF0) << 8;
+	rh |= tempVal[1] << 8;
 
 	rh = rh/512; // Formula as described on pg. 33 of datasheet.
 
