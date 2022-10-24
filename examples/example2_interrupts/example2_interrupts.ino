@@ -1,6 +1,7 @@
-/* example1_basic.ino
+/* example2_interrupts.ino
 
- This example shows basic data retrieval from the SparkFun Indoor Air Quality Sensor - ENS160.
+ This example shows how to configure interrupts for the SparkFun 
+ Indoor Air Quality Sensor - ENS160.
 
  Written by: 
 	Elias Santistevan @ SparkFun Electronics October, 2022
@@ -20,10 +21,13 @@
 
 SparkFun_ENS160 myENS; 
 
+int ensInt = 1; 
 int ensStatus; 
 
 void setup()
 {
+	pinMode(ensInt, INPUT_PULLUP);
+
 	Wire.begin();
 
 	Serial.begin(115200);
@@ -40,13 +44,24 @@ void setup()
 
 	delay(100);
 
-	// Device needs to be set to idle to apply any settings.
-	// myENS.setOperatingMode(SFE_ENS160_IDLE);
+	// Device needs to be set to idle to apply the following settings.
+	myENS.setOperatingMode(SFE_ENS160_IDLE);
+
+	//myENS.configureInterrupt(0x61); //If you want to do the following stuff but all at once.
+
+	myENS.enableInterrupt();			// Enable physical interrupt.
+	myENS.setDataInterrupt();			// Enable the data ready bit on the physical interrupt pin.
+	//myENS.setInterruptPolarity(); // Changes interrupt from active low to active high.
+	//myENS.setInterruptDrive();    //Changes interrupt from active low to push-pull.
+	Serial.println(myENS.getInterruptPolarity());
 
 	// Set to standard operation
 	// Others include SFE_ENS160_DEEP_SLEEP and SFE_ENS160_IDLE
 	myENS.setOperatingMode(SFE_ENS160_STANDARD);
 
+	delay(100);
+
+	
 	// There are four values here: 
 	// 0 - Operating ok: Standard Opepration
 	// 1 - Warm-up: occurs for 3 minutes after power-on.
@@ -56,14 +71,13 @@ void setup()
 	ensStatus = myENS.getFlags();
 	Serial.print("Gas Sensor Status Flag: ");
 	Serial.println(ensStatus);
-	
 }
 
 void loop()
 {
-	if( myENS.checkDataStatus() )
+	if( digitalRead(ensInt) == LOW )
 	{
-		Serial.print("Air Quality Index (1-5) : ");
+		Serial.print("Air Quality Index (1-5): ");
 		Serial.println(myENS.getAQI());
 
 		Serial.print("Total Volatile Organic Compounds: ");

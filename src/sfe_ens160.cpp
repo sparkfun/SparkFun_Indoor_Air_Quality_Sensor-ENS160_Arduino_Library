@@ -1,5 +1,4 @@
 #include "sfe_ens160.h"
-#include "sfe_ens160_regs.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // init()
@@ -171,6 +170,26 @@ bool QwDevENS160::setOperatingMode(uint8_t val)
 
 
 //////////////////////////////////////////////////////////////////////////////
+// getOperatingMode()
+//
+// Gets the current operating mode: Deep Sleep (0x00), Idle (0x01), Standard (0x02), Reset (0xF0)
+//
+
+
+int8_t QwDevENS160::getOperatingMode()
+{
+	int32_t retVal;
+	uint8_t tempVal; 
+
+	retVal = readRegisterRegion(SFE_ENS160_OP_MODE, &tempVal, 1);
+
+	if( retVal != 0 )
+		return -1;
+
+	return tempVal; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // configureInterrupt()
 //
 // Changes all of the settings within the interrupt configuration register.
@@ -203,7 +222,7 @@ bool QwDevENS160::configureInterrupt(uint8_t val)
 //  enable			 Turns on or off the interrupt. 
 //
 
-bool QwDevENS160::setInterrupt(bool enable)
+bool QwDevENS160::enableInterrupt(bool enable)
 {
 	int32_t retVal;
 	uint8_t tempVal; 
@@ -213,7 +232,7 @@ bool QwDevENS160::setInterrupt(bool enable)
 	if( retVal != 0 )
 		return false;
 	
-	tempVal = (tempVal & (uint8_t)enable); 
+	tempVal = (tempVal | (uint8_t)enable); 
 
 	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 
@@ -244,7 +263,7 @@ bool QwDevENS160::setInterruptPolarity(bool activeHigh)
 	if( retVal != 0 )
 		return false;
 
-	tempVal = (tempVal & (uint8_t)(activeHigh << 6)); 
+	tempVal = (tempVal | (activeHigh << 6)); 
 
 	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 
@@ -252,6 +271,29 @@ bool QwDevENS160::setInterruptPolarity(bool activeHigh)
 		return false;
 
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// getInterruptPolarity()
+//
+// Retrieves the polarity of the physical interrupt. 
+//
+
+int8_t QwDevENS160::getInterruptPolarity()
+{
+	int32_t retVal;
+	uint8_t tempVal; 
+
+	retVal = readRegisterRegion(SFE_ENS160_CONFIG, &tempVal, 1);
+	Serial.print("Raw: ");
+	Serial.println(tempVal);
+	
+	if( retVal != 0 )
+		return -1;
+
+	tempVal &= 0x40;
+
+	return (tempVal >> 6);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -274,7 +316,7 @@ bool QwDevENS160::setInterruptDrive(bool pushPull)
 	if( retVal != 0 )
 		return false;
 	
-	tempVal = (tempVal & (uint8_t)(pushPull << 5)); 
+	tempVal = (tempVal | (uint8_t)(pushPull << 5)); 
 
 	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 
@@ -304,7 +346,7 @@ bool QwDevENS160::setDataInterrupt(bool enable)
 	if( retVal != 0 )
 		return false;
 	
-	tempVal = (tempVal & (uint8_t)(enable << 1)); 
+	tempVal = (tempVal | (uint8_t)(enable << 1)); 
 
 	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 
@@ -334,7 +376,7 @@ bool QwDevENS160::setGPRInterrupt(bool enable)
 	if( retVal != 0 )
 		return false;
 	
-	tempVal = (tempVal & (uint8_t)(enable << 3)); 
+	tempVal = (tempVal | (uint8_t)(enable << 3)); 
 	
 	retVal = writeRegisterRegion(SFE_ENS160_CONFIG, tempVal, 1);
 

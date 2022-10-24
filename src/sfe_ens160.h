@@ -41,6 +41,7 @@
 // Sensor. 
 
 #include "sfe_bus.h"
+#include "sfe_ens160_regs.h"
 
 
 #define ENS160_ADDRESS_LOW 0x52
@@ -119,14 +120,16 @@ class QwDevENS160
 		//
 
 		bool setOperatingMode(uint8_t);
+		int8_t getOperatingMode();
 		uint32_t getAppVer();
 		uint16_t getUniqueID();
 
     //////////////////////////////////////////////////////////////////////////////////
 		// Interrupts
 		bool configureInterrupt(uint8_t);
-		bool setInterrupt(bool enable = true);
+		bool enableInterrupt(bool enable = true);
 		bool setInterruptPolarity(bool activeHigh = true);
+		int8_t getInterruptPolarity();
 		bool setInterruptDrive(bool pushPull = true);
 		bool setDataInterrupt(bool enable = true);
 		bool setGPRInterrupt(bool);

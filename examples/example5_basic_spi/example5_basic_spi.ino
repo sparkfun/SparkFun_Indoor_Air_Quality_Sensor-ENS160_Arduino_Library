@@ -1,6 +1,6 @@
-/* example1_basic.ino
+/* example6_basic_example_spi.ino
 
- This example shows basic data retrieval from the SparkFun Indoor Air Quality Sensor - ENS160.
+ This example shows basic data retrieval from the SparkFun Indoor Air Quality Sensor - ENS160 using SPI.
 
  Written by: 
 	Elias Santistevan @ SparkFun Electronics October, 2022
@@ -15,20 +15,24 @@
  License(http://opensource.org/licenses/MIT).
 
 */
-#include <Wire.h>
+#include <SPI.h>
 #include "SparkFun_ENS160.h"
 
-SparkFun_ENS160 myENS; 
+SparkFun_ENS160_SPI myENS; 
 
-int ensStatus; 
+int chipSelect = 1; 
 
 void setup()
 {
-	Wire.begin();
+
+	pinMode(chipSelect, OUTPUT);
+	digitalWrite(chipSelect, HIGH);
+
+	SPI.begin();
 
 	Serial.begin(115200);
 
-	if( !myENS.begin() )
+	if( !myENS.begin(chipSelect) )
 	{
 		Serial.println("Did not begin.");
 		while(1);
@@ -40,13 +44,14 @@ void setup()
 
 	delay(100);
 
-	// Device needs to be set to idle to apply any settings.
-	// myENS.setOperatingMode(SFE_ENS160_IDLE);
-
 	// Set to standard operation
 	// Others include SFE_ENS160_DEEP_SLEEP and SFE_ENS160_IDLE
 	myENS.setOperatingMode(SFE_ENS160_STANDARD);
 
+	// Check that standard operation is on. 
+	if( myENS.checkOperationMode() )
+		Serial.println("Running.");
+	
 	// There are four values here: 
 	// 0 - Operating ok: Standard Opepration
 	// 1 - Warm-up: occurs for 3 minutes after power-on.
@@ -56,7 +61,6 @@ void setup()
 	ensStatus = myENS.getFlags();
 	Serial.print("Gas Sensor Status Flag: ");
 	Serial.println(ensStatus);
-	
 }
 
 void loop()
