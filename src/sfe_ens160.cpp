@@ -285,8 +285,6 @@ int8_t QwDevENS160::getInterruptPolarity()
 	uint8_t tempVal; 
 
 	retVal = readRegisterRegion(SFE_ENS160_CONFIG, &tempVal, 1);
-	Serial.print("Raw: ");
-	Serial.println(tempVal);
 	
 	if( retVal != 0 )
 		return -1;
