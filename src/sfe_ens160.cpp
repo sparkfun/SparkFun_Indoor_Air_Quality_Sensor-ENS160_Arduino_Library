@@ -17,6 +17,10 @@ bool QwDevENS160::init(void)
         return false;
 		
 		uniqueID = getUniqueID(); 
+
+		Serial.print("Unique ID: ");
+		Serial.println(uniqueID, HEX);
+
 		if( uniqueID != ENS160_DEVICE_ID )
 			return false; 
 
@@ -59,7 +63,7 @@ bool QwDevENS160::isConnected()
 //  theBus       The communication bus object
 //  i2cAddress   I2C address for the 6DoF
 
-void QwDevENS160::setCommunicationBus(QwIDeviceBus &theBus, uint8_t i2cAddress)
+void QwDevENS160::setCommunicationBus(sfe_ENS160::QwIDeviceBus &theBus, uint8_t i2cAddress)
 {
     _sfeBus = &theBus;
 		_i2cAddress = i2cAddress; 
@@ -76,7 +80,7 @@ void QwDevENS160::setCommunicationBus(QwIDeviceBus &theBus, uint8_t i2cAddress)
 //  theBus       The communication bus object
 //  
 
-void QwDevENS160::setCommunicationBus(QwIDeviceBus &theBus)
+void QwDevENS160::setCommunicationBus(sfe_ENS160::QwIDeviceBus &theBus)
 {
     _sfeBus = &theBus;
 }
@@ -131,10 +135,14 @@ uint16_t QwDevENS160::getUniqueID()
 	uint16_t id; 
 
 	retVal = readRegisterRegion(SFE_ENS160_PART_ID, tempVal, 2);
-	
+
 	id = tempVal[0];
 	id |= tempVal[1] << 8;
 
+	Serial.print("return val: ");
+	Serial.println(retVal);
+	Serial.print("id: ");
+	Serial.println(id);
 	if( retVal != 0 )
 		return 0;
 
@@ -288,6 +296,8 @@ int8_t QwDevENS160::getInterruptPolarity()
 	
 	if( retVal != 0 )
 		return -1;
+	Serial.print("Raw: ");
+	Serial.println(tempVal);
 
 	tempVal &= 0x40;
 

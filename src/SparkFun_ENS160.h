@@ -99,7 +99,7 @@ class SparkFun_ENS160 : public QwDevENS160
 	private: 
 
 		//I2C bus class
-		QwI2C _i2cBus; 
+		sfe_ENS160::QwI2C _i2cBus; 
 
 };
 	
@@ -160,6 +160,6 @@ class SparkFun_ENS160_SPI : public QwDevENS160
 		private:
 
 		// SPI bus class
-		SfeSPI _spiBus;
+		sfe_ENS160::SfeSPI _spiBus;
 
 };

@@ -112,8 +112,8 @@ class QwDevENS160
     //  idBus        The bus ID for the target device.
     //
 
-		void setCommunicationBus(QwIDeviceBus &theBus, uint8_t i2cAddress);
-		void setCommunicationBus(QwIDeviceBus &theBus);
+		void setCommunicationBus(sfe_ENS160::QwIDeviceBus &theBus, uint8_t i2cAddress);
+		void setCommunicationBus(sfe_ENS160::QwIDeviceBus &theBus);
 
     //////////////////////////////////////////////////////////////////////////////////
 		// General Operation
@@ -166,7 +166,7 @@ class QwDevENS160
 	private: 
 
 		
-		QwIDeviceBus *_sfeBus; 
+		sfe_ENS160::QwIDeviceBus *_sfeBus; 
 		uint8_t _i2cAddress;
 		uint8_t _cs;
 };

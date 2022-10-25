@@ -55,6 +55,8 @@ const static uint16_t kChunkSize = kMaxTransferBuffer;
 //
 
 
+namespace sfe_ENS160 {
+
 QwI2C::QwI2C(void) : _i2cPort{nullptr}
 {
 }
@@ -260,7 +262,7 @@ bool SfeSPI::init(uint8_t cs,  bool bInit)
 {
 
 		//If the transaction settings are not provided by the user they are built here.
-		SPISettings spiSettings = SPISettings(3000000, MSBFIRST, SPI_MODE3); 
+		SPISettings spiSettings = SPISettings(3000000, MSBFIRST, SPI_MODE0); 
 
 		//In addition of the port is not provided by the user, it defaults to SPI here. 
 		return init(SPI, spiSettings, cs, bInit);
@@ -369,7 +371,6 @@ int SfeSPI::readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t *data, uint16_
         return -1;
 
     int i; // counter in loop
-
 		// Apply settings
     _spiPort->beginTransaction(_sfeSPISettings);
 		// Signal communication start
@@ -387,5 +388,7 @@ int SfeSPI::readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t *data, uint16_
 		digitalWrite(_cs, HIGH);
     _spiPort->endTransaction();
 		return 0; 
+
+}
 
 }

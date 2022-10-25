@@ -49,6 +49,7 @@
 #include <SPI.h>
 
 
+namespace sfe_ENS160 {
 // The following abstract class is used an interface for upstream implementation.
 class QwIDeviceBus 
 {
@@ -125,3 +126,4 @@ class SfeSPI : public QwIDeviceBus
 		uint8_t _cs; 
 };
 
+};
