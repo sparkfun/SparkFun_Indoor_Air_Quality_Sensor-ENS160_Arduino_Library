@@ -325,12 +325,10 @@ int SfeSPI::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, const uint8
 		// Signal communication start
 		digitalWrite(_cs, LOW);
 
-		//ENS160 expects bits [7:1] to be the address and the leading
-		//bit to be a "zero" for a write.
-    _spiPort->transfer(offset << 1);
-
 		for(i = 0; i < length; i++)
 		{
+			// Increment Address (Device does not do this when using SPI)
+			_spiPort->transfer((offset + i) << 1);
 			_spiPort->transfer(*data++);
 		}
 

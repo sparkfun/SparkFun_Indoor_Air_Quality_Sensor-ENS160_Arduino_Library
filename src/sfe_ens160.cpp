@@ -427,8 +427,8 @@ bool QwDevENS160::setTempCompensation(float tempKelvin)
 	uint16_t kelvinConversion = tempKelvin; 
 
 	kelvinConversion = kelvinConversion * 64; // convert value - fixed equation pg. 29 of datasheet
-	tempVal[0] = (kelvinConversion & 0x0F);
-	tempVal[1] = (kelvinConversion & 0xF0) >> 8;
+	tempVal[0] = (kelvinConversion & 0x00FF);
+	tempVal[1] = (kelvinConversion & 0xFF00) >> 8;
 
 	retVal = writeRegisterRegion(SFE_ENS160_TEMP_IN, tempVal, 2);
 
@@ -438,6 +438,26 @@ bool QwDevENS160::setTempCompensation(float tempKelvin)
 	return true; 
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// setTempCompensationCelsius()
+//
+// The ENS160 can use temperature data to help give more accurate sensor data. 
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  tempCelsius	 The given temperature in Celsius 
+//
+
+bool QwDevENS160::setTempCompensationCelsius(float tempCelsius)
+{
+	float kelvinConversion = tempCelsius + 273.15; 
+
+	if( setTempCompensation(kelvinConversion) )
+			return true;
+
+	return false; 
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -455,8 +475,8 @@ bool QwDevENS160::setRHCompensation(uint16_t humidity)
 	uint8_t tempVal[2] = {0};
 
 	humidity = humidity * 512; // convert value - fixed equation pg. 29 in datasheet. 
-	tempVal[0] = (humidity & 0x0F);
-	tempVal[1] = (humidity & 0xF0) >> 8;
+	tempVal[0] = (humidity & 0x00FF);
+	tempVal[1] = (humidity & 0xFF00) >> 8;
 
 	retVal = writeRegisterRegion(SFE_ENS160_RH_IN, tempVal, 2);
 
@@ -466,6 +486,24 @@ bool QwDevENS160::setRHCompensation(uint16_t humidity)
 	return true; 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// setRHCompensationFloat()
+//
+// The ENS160 can use relative Humidiy data to help give more accurate sensor data. 
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  humidity	   The given relative humidity. 
+//
+bool QwDevENS160::setRHCompensationFloat(float humidity)
+{
+	uint16_t humidityConversion = (uint16_t)humidity;
+
+	if( setRHCompensation(humidityConversion) )
+		return false;
+
+	return true; 
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // checkDataStatus()
@@ -558,11 +596,11 @@ uint8_t QwDevENS160::getFlags()
 
 
 //////////////////////////////////////////////////////////////////////////////
-// checkOperationMode()
+// checkOperationStatus()
 //
 // Checks the bit that indicates if an operation mode is running i.e. the device is not off. 
 //
-bool QwDevENS160::checkOperationMode()
+bool QwDevENS160::checkOperationStatus()
 {
 	int32_t retVal;
 	uint8_t tempVal;
@@ -712,7 +750,7 @@ float QwDevENS160::getTempKelvin()
 {
 	int32_t retVal;
 	float temperature; 
-	uint16_t tempConversion; 
+	int16_t tempConversion; 
 	uint8_t tempVal[2] = {0}; 
 
 	retVal = readRegisterRegion(SFE_ENS160_DATA_T, tempVal, 2);
@@ -721,7 +759,7 @@ float QwDevENS160::getTempKelvin()
 		return 0;
 	
 	tempConversion = tempVal[0];
-	tempConversion |= tempVal[1] << 8;
+	tempConversion |= (tempVal[1] << 8);
 	temperature = (float)tempConversion; 
 
 	temperature = temperature/64; // Formula as described on pg. 32 of datasheet.

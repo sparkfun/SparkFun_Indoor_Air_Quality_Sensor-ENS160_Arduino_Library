@@ -139,7 +139,11 @@ class QwDevENS160
 		//
 
 		bool setTempCompensation(float);
+		//float getTempCompensation();
+		bool setTempCompensationCelsius(float);
+		//float getTempCompensationCelsius();
 		bool setRHCompensation(uint16_t);
+		bool setRHCompensationFloat(float);
 		
     //////////////////////////////////////////////////////////////////////////////////
 		// Device status
@@ -148,7 +152,7 @@ class QwDevENS160
 		bool checkDataStatus();
 		bool checkGPRStatus();
 		uint8_t getFlags();
-		bool checkOperationMode();
+		bool checkOperationStatus();
 		bool getOperationError();
 
     //////////////////////////////////////////////////////////////////////////////////

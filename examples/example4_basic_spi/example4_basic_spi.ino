@@ -1,4 +1,4 @@
-/* example6_basic_example_spi.ino
+/* example4_basic_example_spi.ino
 
  This example shows basic data retrieval from the SparkFun Indoor Air Quality Sensor - ENS160 using SPI.
 
