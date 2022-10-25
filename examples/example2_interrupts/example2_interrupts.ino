@@ -53,10 +53,9 @@ void setup()
 	myENS.setDataInterrupt();			// Enable the data ready bit on the physical interrupt pin.
 	//myENS.setInterruptPolarity(); // Changes interrupt from active low to active high.
 	//myENS.setInterruptDrive();    //Changes interrupt from active low to push-pull.
-	Serial.println(myENS.getInterruptPolarity());
 
 	// Set to standard operation
-	// Others include SFE_ENS160_DEEP_SLEEP and SFE_ENS160_IDLE
+	// Others args include SFE_ENS160_DEEP_SLEEP and SFE_ENS160_IDLE
 	myENS.setOperatingMode(SFE_ENS160_STANDARD);
 
 	delay(100);
