@@ -18,9 +18,6 @@ bool QwDevENS160::init(void)
 		
 		uniqueID = getUniqueID(); 
 
-		Serial.print("Unique ID: ");
-		Serial.println(uniqueID, HEX);
-
 		if( uniqueID != ENS160_DEVICE_ID )
 			return false; 
 
@@ -139,10 +136,6 @@ uint16_t QwDevENS160::getUniqueID()
 	id = tempVal[0];
 	id |= tempVal[1] << 8;
 
-	Serial.print("return val: ");
-	Serial.println(retVal);
-	Serial.print("id: ");
-	Serial.println(id);
 	if( retVal != 0 )
 		return 0;
 
@@ -296,8 +289,6 @@ int8_t QwDevENS160::getInterruptPolarity()
 	
 	if( retVal != 0 )
 		return -1;
-	Serial.print("Raw: ");
-	Serial.println(tempVal);
 
 	tempVal &= 0x40;
 

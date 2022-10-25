@@ -45,7 +45,7 @@
 #include <Arduino.h>
 
 #define kMaxTransferBuffer 32
-#define SPI_READ 0x80
+#define SPI_READ 0x01
 
 // What we use for transfer chunk size
 const static uint16_t kChunkSize = kMaxTransferBuffer;
@@ -324,7 +324,10 @@ int SfeSPI::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, const uint8
     _spiPort->beginTransaction(_sfeSPISettings);
 		// Signal communication start
 		digitalWrite(_cs, LOW);
-    _spiPort->transfer(offset);
+
+		//ENS160 expects bits [7:1] to be the address and the leading
+		//bit to be a "zero" for a write.
+    _spiPort->transfer(offset << 1);
 
 		for(i = 0; i < length; i++)
 		{
@@ -347,7 +350,9 @@ int SfeSPI::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t dat
 		// Signal communication start
 		digitalWrite(_cs, LOW);
 
-    _spiPort->transfer(offset);
+		//ENS160 expects bits [7:1] to be the address and the leading
+		//bit to be a "zero" for a write.
+    _spiPort->transfer(offset << 1);
 		_spiPort->transfer(data);
 
 		// End communication
@@ -375,8 +380,10 @@ int SfeSPI::readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t *data, uint16_
     _spiPort->beginTransaction(_sfeSPISettings);
 		// Signal communication start
 		digitalWrite(_cs, LOW);
-		// A leading zero must be added to transfer with register to indicate a "read"
-		reg = (reg | SPI_READ);
+
+		//ENS160 expects bits [7:1] to be the address and the leading
+		//bit to be a "one" for a read.
+		reg = ((reg << 1) | SPI_READ);
     _spiPort->transfer(reg);
 
 		for(i = 0; i < numBytes; i++)
