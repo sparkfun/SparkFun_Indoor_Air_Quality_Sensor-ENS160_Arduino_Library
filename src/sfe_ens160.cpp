@@ -663,7 +663,7 @@ uint8_t QwDevENS160::getAQI()
 	if( retVal != 0 )
 		return 0;
 	
-	tempVal = (tempVal & 0x03);
+	tempVal = (tempVal & 0x07);
 
 	return tempVal;
 }
