@@ -424,9 +424,8 @@ bool QwDevENS160::setTempCompensation(float tempKelvin)
 {
 	int32_t retVal;
 	uint8_t tempVal[2] = {0};
-	uint16_t kelvinConversion = tempKelvin; 
+	uint16_t kelvinConversion = tempKelvin * 64; // convert value - fixed equation pg. 29 of datasheet
 
-	kelvinConversion = kelvinConversion * 64; // convert value - fixed equation pg. 29 of datasheet
 	tempVal[0] = (kelvinConversion & 0x00FF);
 	tempVal[1] = (kelvinConversion & 0xFF00) >> 8;
 
@@ -471,19 +470,12 @@ bool QwDevENS160::setTempCompensationCelsius(float tempCelsius)
 //
 bool QwDevENS160::setRHCompensation(uint16_t humidity)
 {
-	int32_t retVal;
-	uint8_t tempVal[2] = {0};
+	float humidityConversion = (float)humidity;
 
-	humidity = humidity * 512; // convert value - fixed equation pg. 29 in datasheet. 
-	tempVal[0] = (humidity & 0x00FF);
-	tempVal[1] = (humidity & 0xFF00) >> 8;
-
-	retVal = writeRegisterRegion(SFE_ENS160_RH_IN, tempVal, 2);
-
-	if( retVal != 0 )
+	if( setRHCompensationFloat(humidityConversion) )
 		return false;
 
-	return true; 
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -497,12 +489,19 @@ bool QwDevENS160::setRHCompensation(uint16_t humidity)
 //
 bool QwDevENS160::setRHCompensationFloat(float humidity)
 {
-	uint16_t humidityConversion = (uint16_t)humidity;
+	int32_t retVal;
+	uint8_t tempVal[2] = {0};
+	uint16_t humidityConversion = humidity * 512; // convert value - fixed equation pg. 29 in datasheet. 
+	
+	tempVal[0] = (humidityConversion & 0x00FF);
+	tempVal[1] = (humidityConversion & 0xFF00) >> 8;
 
-	if( setRHCompensation(humidityConversion) )
+	retVal = writeRegisterRegion(SFE_ENS160_RH_IN, tempVal, 2);
+
+	if( retVal != 0 )
 		return false;
 
-	return true; 
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -802,7 +801,5 @@ float QwDevENS160::getRH()
 	rh = tempVal[0];
 	rh |= tempVal[1] << 8;
 
-	rh = rh/512; // Formula as described on pg. 33 of datasheet.
-
-	return rh;
+	return rh/512.0; // Formula as described on pg. 33 of datasheet.
 }
