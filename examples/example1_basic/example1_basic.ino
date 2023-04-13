@@ -48,7 +48,7 @@ void setup()
 	myENS.setOperatingMode(SFE_ENS160_STANDARD);
 
 	// There are four values here: 
-	// 0 - Operating ok: Standard Opepration
+	// 0 - Operating ok: Standard Operation
 	// 1 - Warm-up: occurs for 3 minutes after power-on.
 	// 2 - Initial Start-up: Occurs for the first hour of operation.
   //												and only once in sensor's lifetime.
