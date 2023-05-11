@@ -7,6 +7,9 @@
  rounding of the temperature and relative humidity values when they're given to the sensor
  and again when they're read back. 
 
+ Please note that for compensation values the datasheet specifies that they can be written
+ at any time. 
+
  Written by: 
 	Elias Santistevan @ SparkFun Electronics October, 2022
 
@@ -60,9 +63,6 @@ void setup()
 		Serial.println("Ready.");
 
 	delay(100);
-
-	// Device needs to be set to idle to apply any settings.
-	myENS.setOperatingMode(SFE_ENS160_IDLE);
 
 	mySHTC3.update(); // Send command to take a measurement
 	if( mySHTC3.lastStatus != SHTC3_Status_Nominal )
