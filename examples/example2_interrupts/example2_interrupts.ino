@@ -86,6 +86,8 @@ void loop()
 		Serial.print("CO2 concentration: ");
 		Serial.print(myENS.getECO2());
 		Serial.println("ppm");
+
+		Serial.println();
 	}
 
 	delay(200);

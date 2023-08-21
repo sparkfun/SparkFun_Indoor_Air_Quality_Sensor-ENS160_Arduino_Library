@@ -1,4 +1,4 @@
-/* example3_temp_rh_compensation.ino
+/* example3a_SHTC3_temp_rh_compensation.ino
 
  This example shows how to give the ENS160 Temperature and Relative Humidity
  Data for compensation. Note that the values that are given for compensation are not
@@ -14,8 +14,8 @@
 	Elias Santistevan @ SparkFun Electronics October, 2022
 
  Products: 
-  Air Quality Sensor              -  https://www.sparkfun.com/products/20844
-  Humidity and Temperature Sensor -  https://www.sparkfun.com/products/16467
+  Air Quality Sensor (ENS160)             -  https://www.sparkfun.com/products/20844
+  Humidity and Temperature Sensor (SHTC3) -  https://www.sparkfun.com/products/16467
  
  Repository:
 	https://github.com/sparkfun/SparkFun_Indoor_Air_Quality_Sensor-ENS160_Arduino_Library
@@ -25,7 +25,7 @@
 
 */
 #include <Wire.h>
-#include "SparkFun_ENS160.h"
+#include "SparkFun_ENS160.h" // Click here to get the library: http://librarymanager/All#SparkFun_ENS160
 #include "SparkFun_SHTC3.h" // Click here to get the library: http://librarymanager/All#SparkFun_SHTC3
 
 SHTC3 mySHTC3;              // Humidity and Temp Sensor.
@@ -128,7 +128,8 @@ void loop()
 		Serial.print("CO2 concentration: ");
 		Serial.print(myENS.getECO2());
 		Serial.println("ppm");
-
+		
+		Serial.println();
 	}
 
 	delay(200);
