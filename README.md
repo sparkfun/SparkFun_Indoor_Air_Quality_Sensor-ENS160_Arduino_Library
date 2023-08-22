@@ -3,7 +3,7 @@ SparkFun Indoor Air Quality Sensor-ENS160 Arduino Library
 
 [![SparkFun Indoor Air Quality Sensor-ENS160](https://cdn.sparkfun.com/assets/parts/2/0/6/1/0/ENS160-_01.jpg)](https://www.sparkfun.com/products/20844)
 
-[*SparkFun Indoor Air Quality Sensor-ENS160 (SKU)*](https://www.sparkfun.com/products/20844)
+[*SparkFun Indoor Air Quality Sensor-ENS160 (SEN-20844)*](https://www.sparkfun.com/products/20844)
 <Basic description of the part.>
   
 
