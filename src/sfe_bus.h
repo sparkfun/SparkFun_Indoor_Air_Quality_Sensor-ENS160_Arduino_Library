@@ -1,16 +1,18 @@
 // sfe_bus.h
 //
-// This is a library written for SparkFun Indoor Air Quality Sensor - ENS160 (Qwiic)
+// This is a library written for SparkFun Indoor Air Quality Sensor - ENS160
+// (Qwiic)
 //
 // SparkFun sells these boards at its website: www.sparkfun.com
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-// SparkFun Indoor Air Quality Sensor - ENS160 (Qwiic)    https://www.sparkfun.com/products/20844
+// SparkFun Indoor Air Quality Sensor - ENS160 (Qwiic)
+// https://www.sparkfun.com/products/20844
 //
 // Written by Elias Santistevan @ SparkFun Electronics, October 2022
 //
-//Repository:
+// Repository:
 //		https://github.com/sparkfun/SparkFun_Indoor_Air_Quality_Sensor-ENS160_Arduino_Library
 //
 //
@@ -40,90 +42,91 @@
 // The following classes specify the behavior for communicating
 // over the respective data buses: Inter-Integrated Circuit (I2C)
 // and Serial Peripheral Interface (SPI). For ease of implementation
-// an abstract interface (QwIDeviceBus) is used. 
+// an abstract interface (QwIDeviceBus) is used.
 
 #pragma once
 
-
-#include <Wire.h>
 #include <SPI.h>
-
+#include <Wire.h>
 
 namespace sfe_ENS160 {
-// The following abstract class is used an interface for upstream implementation.
-class QwIDeviceBus 
-{
-	public: 
+// The following abstract class is used an interface for upstream
+// implementation.
+class QwIDeviceBus {
+public:
+  virtual bool ping(uint8_t address) = 0;
 
-		virtual bool ping(uint8_t address) = 0;
+  virtual bool writeRegisterByte(uint8_t address, uint8_t offset,
+                                 uint8_t data) = 0;
 
-		virtual	bool writeRegisterByte(uint8_t address, uint8_t offset, uint8_t data) = 0;
+  virtual int writeRegisterRegion(uint8_t address, uint8_t offset,
+                                  const uint8_t *data, uint16_t length) = 0;
 
-		virtual int writeRegisterRegion(uint8_t address, uint8_t offset, const uint8_t* data, uint16_t length) = 0;
+  virtual int writeRegisterRegion(uint8_t address, uint8_t offset, uint8_t data,
+                                  uint16_t length) = 0;
 
-		virtual int writeRegisterRegion(uint8_t address, uint8_t offset, uint8_t data, uint16_t length) = 0;
-
-		virtual int readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t numBytes) = 0;
-
+  virtual int readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t *data,
+                                 uint16_t numBytes) = 0;
 };
 
-// The QwI2C device defines behavior for I2C implementation based around the TwoWire class (Wire).
-// This is Arduino specific. 
-class QwI2C : public QwIDeviceBus
-{
-	public: 
+// The QwI2C device defines behavior for I2C implementation based around the
+// TwoWire class (Wire). This is Arduino specific.
+class QwI2C : public QwIDeviceBus {
+public:
+  QwI2C(void);
 
-		QwI2C(void);
+  bool init();
 
-		bool init();
+  bool init(TwoWire &wirePort, bool bInit = false);
 
-		bool init(TwoWire& wirePort, bool bInit=false);
+  bool ping(uint8_t address);
 
-		bool ping(uint8_t address);
+  bool writeRegisterByte(uint8_t address, uint8_t offset, uint8_t data);
 
-		bool writeRegisterByte(uint8_t address, uint8_t offset, uint8_t data);
+  int writeRegisterRegion(uint8_t address, uint8_t offset, const uint8_t *data,
+                          uint16_t length);
 
-		int writeRegisterRegion(uint8_t address, uint8_t offset, const uint8_t* data, uint16_t length);
+  int writeRegisterRegion(uint8_t address, uint8_t offset, uint8_t data,
+                          uint16_t length);
 
-		int writeRegisterRegion(uint8_t address, uint8_t offset, uint8_t data, uint16_t length);
+  int readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t *data,
+                         uint16_t numBytes);
 
-		int readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t numBytes);
-
-	private: 
-
-    TwoWire* _i2cPort;
+private:
+  TwoWire *_i2cPort;
 };
 
-// The SfeSPI class defines behavior for SPI implementation based around the SPIClass class (SPI).
-// This is Arduino specific. 
-// Paramaters like "address" are kept although irrelevant to SPI due to the use of the abstract class
-// as interface, QwIDeviceBus.
-class SfeSPI : public QwIDeviceBus
-{
-	public:
+// The SfeSPI class defines behavior for SPI implementation based around the
+// SPIClass class (SPI). This is Arduino specific. Paramaters like "address" are
+// kept although irrelevant to SPI due to the use of the abstract class as
+// interface, QwIDeviceBus.
+class SfeSPI : public QwIDeviceBus {
+public:
+  SfeSPI(void);
 
-		SfeSPI(void);
+  bool init(uint8_t cs, bool bInit = false);
 
-		bool init(uint8_t cs, bool bInit=false);
+  bool init(SPIClass &spiPort, SPISettings &ensSPISettings, uint8_t cs,
+            bool bInit = false);
 
-		bool init(SPIClass& spiPort, SPISettings& ensSPISettings, uint8_t cs,  bool bInit=false);
+  bool ping(uint8_t address);
 
-		bool ping(uint8_t address);
+  bool writeRegisterByte(uint8_t address, uint8_t offset, uint8_t data);
 
-		bool writeRegisterByte(uint8_t address, uint8_t offset, uint8_t data);
+  int writeRegisterRegion(uint8_t address, uint8_t offset, const uint8_t *data,
+                          uint16_t length);
 
-		int writeRegisterRegion(uint8_t address, uint8_t offset, const uint8_t* data, uint16_t length);
+  int writeRegisterRegion(uint8_t address, uint8_t offset, uint8_t data,
+                          uint16_t length);
 
-		int writeRegisterRegion(uint8_t address, uint8_t offset, uint8_t data, uint16_t length);
+  int readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t *data,
+                         uint16_t numBytes);
 
-		int readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t numBytes);
-
-	private:
-
-		SPIClass* _spiPort; 
-		// Settings are used for every transaction.
-		SPISettings _sfeSPISettings;
-		uint8_t _cs; 
+private:
+  SPIClass *_spiPort;
+  // Settings are used for every transaction.
+  SPISettings _sfeSPISettings;
+  uint8_t _cs;
 };
 
-};
+}; // namespace sfe_ENS160
