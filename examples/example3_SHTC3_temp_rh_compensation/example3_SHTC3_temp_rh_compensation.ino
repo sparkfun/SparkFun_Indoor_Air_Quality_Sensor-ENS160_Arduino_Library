@@ -48,7 +48,7 @@ void setup()
 
 	if( !myENS.begin() )
 	{
-		Serial.println("Air Quality Sensor did not begin.");
+		Serial.println("Could not communicate with the ENS160, check wiring.");
 		while(1);
 	}
 
@@ -58,6 +58,7 @@ void setup()
 		while(1);
 	}
 
+  Serial.println("Example 3 Humidity and Temperature Sensor Compensation - SHTC3.");
 	// Reset the indoor air quality sensor's settings.
 	if( myENS.setOperatingMode(SFE_ENS160_RESET) )
 		Serial.println("Ready.");
@@ -95,7 +96,7 @@ void setup()
   //												and only once in sensor's lifetime.
 	// 3 - No Valid Output
 	ensStatus = myENS.getFlags();
-	Serial.print("Gas Sensor Status Flag: ");
+	Serial.print("Gas Sensor Status Flag (0 - Standard, 1 - Warm up, 2 - Initial Start Up): ");
 	Serial.println(ensStatus);
 	
 }

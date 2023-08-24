@@ -55,10 +55,12 @@ void setup() {
 
   if (myBME280.beginI2C() == false)  //Begin communication over I2C
   {
-    Serial.println("The sensor did not respond. Please check wiring.");
+    Serial.println("The Environmental did not respond. Please check wiring or I2C Address.");
     while (1)
       ;  //Freeze
   }
+
+  Serial.println("Example 4 Humidity and Temperature Sensor Compensation - BME280.");
 
   rh = myBME280.readFloatHumidity();
   tempC = myBME280.readTempC();
@@ -90,7 +92,7 @@ void setup() {
   //												and only once in sensor's lifetime.
   // 3 - No Valid Output
   ensStatus = myENS.getFlags();
-  Serial.print("Gas Sensor Status Flag: ");
+	Serial.print("Gas Sensor Status Flag (0 - Standard, 1 - Warm up, 2 - Initial Start Up): ");
   Serial.println(ensStatus);
 }
 
