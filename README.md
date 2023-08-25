@@ -36,8 +36,8 @@ Documentation
   * **[Hardware Repo](https://github.com/sparkfun/SparkFun_Indoor_Air_Quality_Sensor-ENS160)** 
   * **[Hookup Guide](https://learn.sparkfun.com/tutorials/sparkfun-indoor-air-quality-sensor---ens160-qwiic-hookup-guide)**
 * **SparkFun Environmental Combo Breakout - ENS160/BME280 (Qwiic)**
-  * * **[Hardware Repo](https://github.com/sparkfun/SparkFun_Environmental_Combo_Breakout_ENS160_BME280_QWIIC)**
-    * **[Hookup Guide](https://docs.sparkfun.com/SparkFun_Environmental_Combo_Breakout_ENS160_BME280_QWIIC)**
+  * **[Hardware Repo](https://github.com/sparkfun/SparkFun_Environmental_Combo_Breakout_ENS160_BME280_QWIIC)**
+  * **[Hookup Guide](https://docs.sparkfun.com/SparkFun_Environmental_Combo_Breakout_ENS160_BME280_QWIIC)**
 
 
 
