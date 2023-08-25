@@ -45,8 +45,8 @@ Documentation
 Products that use this Library 
 ---------------------------------
 
-* [SEN-20844](https://www.sparkfun.com/products/20844)- SparkFun Indoor Air Quality Sensor - ENS160 (Qwiic)
-* [SEN-22858](https://www.sparkfun.com/products/22858)- SparkFun Environmental Combo Breakout - ENS160/BME280 (Qwiic)
+* [SEN-20844](https://www.sparkfun.com/products/20844) -  SparkFun Indoor Air Quality Sensor - ENS160 (Qwiic)
+* [SEN-22858](https://www.sparkfun.com/products/22858) - SparkFun Environmental Combo Breakout - ENS160/BME280 (Qwiic)
 
 
 
