@@ -1,4 +1,6 @@
 #include "sfe_ens160.h"
+#include <math.h>
+
 
 //////////////////////////////////////////////////////////////////////////////
 // init()
@@ -785,4 +787,29 @@ float QwDevENS160::getRH()
     rh |= tempVal[1] << 8;
 
     return rh / 512.0; // Formula as described on pg. 33 of datasheet.
+}
+
+//////////////////////////////////////////////////////////////////////////////
+/// getRawResistance()
+///
+/// For certain gases the raw resistance values of the hot plates can be 
+/// used for post processing. More information can be found within the datasheet.
+uint16_t QwDevENS160::getRawResistance()
+{
+    int32_t retVal;
+    uint16_t res;
+    uint8_t tempVal[2] = {0};
+
+    retVal = readRegisterRegion(SFE_ENS160_GPR_READ6, tempVal, 2);
+
+    if (retVal != 0)
+        return 0;
+
+    res = tempVal[0];
+    res |= tempVal[1] << 8;
+
+    uint16_t resistance = pow(2, res/2048); // Formula as described on page 13 of datasheet.
+
+    return resistance;
+
 }

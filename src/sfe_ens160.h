@@ -41,7 +41,7 @@
 
 #include "sfe_bus.h"
 #include "sfe_ens160_regs.h"
-//#include <stdint.h>
+#include <stdint.h>
 
 #define ENS160_ADDRESS_LOW 0x52
 #define ENS160_ADDRESS_HIGH 0x53
@@ -163,6 +163,8 @@ class QwDevENS160
     float getTempKelvin();
     float getTempCelsius();
     float getRH();
+
+    uint16_t getRawResistance();
 
   private:
     sfe_ENS160::QwIDeviceBus *_sfeBus;
